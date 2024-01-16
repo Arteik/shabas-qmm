@@ -73,10 +73,10 @@ const validationSchema = yup.object().shape({
     criteria4: yup.string().required("Required"),
     progression4: yup.string().required("Required"),
     criteria5: yup.string().required("Required"),
-    smeFirstName: yup.string().required("Required"),
-    smeLastName: yup.string().required("Required"),
-    smePhone: yup.string().required("Required"),
-    smeEmail: yup.string().required("Required"),
+    smeFirstName: yup.string().optional(),
+    smeLastName: yup.string().optional(),
+    smePhone: yup.string().optional(),
+    smeEmail: yup.string().optional()
 });
 
 interface Props {
@@ -507,7 +507,7 @@ const EditQuestion: React.FC<Props> = (props) => {
                         compareChanges(success, initialValues().sme, `SME: `)
                     }
                 })
-            } else {
+            } else if (values.smeFirstName && values.smeLastName && values.smePhone && values.smeEmail) {
                 createSME.mutate({
                     first_name: values.smeFirstName,
                     last_name: values.smeLastName,
