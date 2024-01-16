@@ -5,7 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-import bcrypt from "bcrypt";
+import { compare } from "bcrypt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 // Compare hash with provided password
-                const passwordsMatch = await bcrypt.compare(credentials.password, user.password);
+                const passwordsMatch = await compare(credentials.password, user.password);
 
                 if (passwordsMatch) {
                     // Sketchy cast as per precedent
