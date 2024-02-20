@@ -131,6 +131,8 @@ const AssessmentForm: React.FC<Props> = (props) => {
     const [confirmSubmitModal, setConfirmSubmitModal] = React.useState<boolean>(false);
     const [messageModal, setMessageModal] = React.useState<boolean>(false);
 
+    const router = useRouter();
+
     // =========== Retrieve Form Context ===========
 
     const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: assessment }).data as AssessmentType;
@@ -241,7 +243,9 @@ const AssessmentForm: React.FC<Props> = (props) => {
                         former_value: former[prop].toString(),
                         new_value: changed[prop].toString(),
                         answer_id: Number(answer?.id),
-                    })
+                    }, {onSuccess() {
+                        router.reload()
+                    }})
                 }
             }
         }
@@ -250,7 +254,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
     const update = api.answer.update.useMutation();
     const statusChange = api.assessment.updateStatus.useMutation();
 
-    const handleSubmit = (values: FormValues) => {
+    const handleQuestionSubmit = (values: FormValues) => {
         if (selectedAssessmentQuestion) {
             if (values.id && values.startTime) {
                 update.mutate({
@@ -269,7 +273,6 @@ const AssessmentForm: React.FC<Props> = (props) => {
         }
     }
 
-    const { push } = useRouter();
     const handleSubmitAssesment = () => {
         if (data) {
             if (status == 'ongoing')
@@ -278,7 +281,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'ongoing-review',
                 }, {
                     async onSuccess() {
-                        await push(`/assessments/ongoing-review/${data.id}`)
+                        await router.push(`/assessments/ongoing-review/${data.id}`)
                     }
                 })
             if (status == 'ongoing-review')
@@ -287,7 +290,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'oversight',
                 }, {
                     async onSuccess() {
-                        await push(`/assessments/oversight/${data.id}`)
+                        await router.push(`/assessments/oversight/${data.id}`)
                     }
                 })
             if (status == 'oversight')
@@ -296,7 +299,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'oversight-review',
                 }, {
                     async onSuccess() {
-                        await push(`/assessments/oversight-review/${data.id}`)
+                        await router.push(`/assessments/oversight-review/${data.id}`)
                     }
                 })
             if (status == 'oversight-review')
@@ -305,7 +308,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'completed',
                 }, {
                     async onSuccess() {
-                        await push(`/assessments/completed/${data.id}`)
+                        await router.push(`/assessments/completed/${data.id}`)
                     }
                 })
         }
@@ -335,7 +338,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                 validationSchema={status == 'oversight' ? validationSchemaOversight : validationSchema}
                 validateOnBlur={false}
                 validateOnChange={false}
-                onSubmit={handleSubmit}
+                onSubmit={handleQuestionSubmit}
             >
                 {({ resetForm }) => (
                     <Form>
