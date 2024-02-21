@@ -39,7 +39,7 @@ export const Layout: React.FC<Props> = (props) => {
     };
     const handleLogout = async () => {
         signOut();
-        await router.push(`/api/auth/signin`);
+        await router.replace(`/api/auth/signin`);
     }
     const hidden = useMediaQuery('(min-width: 1300px)');
 
@@ -192,7 +192,7 @@ export const Layout: React.FC<Props> = (props) => {
                             }
                         </div>
                         :
-                        <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                        <Button onClick={() => router.replace(`/api/auth/signin`)} className='user-button'>
                             Login
                         </Button>
                     }
