@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import ViewQuestion from '~/components/Question/ViewQuestion';
 import EditQuestion from '~/components/Question/EditQuestion';
+import { Suspense } from 'react';
 
 const Question: NextPage = () => {
 
@@ -14,10 +15,27 @@ const Question: NextPage = () => {
 
     const { question } = useRouter().query;
 
-    const { data } = api.question.getByIdInclude.useQuery({ id: Number(question) });
-    
-    const inUse = api.assessmentQuestion.getByQuestionUsage.useQuery(Number(question)).data ? true : false;
+    if (question) {
+        return <QuestionInternal question={question} session={session} />
+    } else {
+        return <Suspense fallback={<Loading />} />
+    }
 
+    function Loading() {
+        return <h2>🌀 Loading...</h2>;
+    }
+};
+
+interface QuestionProps {
+    question: any;
+    session: any;
+}
+
+const QuestionInternal: React.FC<QuestionProps> = (props) => {
+    const { question, session } = props
+    const { data } = api.question.getByIdInclude.useQuery({ id: Number(question) });
+
+    const inUse = api.assessmentQuestion.getByQuestionUsage.useQuery(Number(question)).data ? true : false;
 
     if (inUse) {
         return (
@@ -31,6 +49,7 @@ const Question: NextPage = () => {
             <EditQuestion data={data} />
         </Layout>
     );
-};
+
+}
 
 export default Question;

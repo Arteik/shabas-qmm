@@ -540,7 +540,7 @@ const EditQuestion: React.FC<Props> = (props) => {
 
     return (<>
         <Formik
-            enableReinitialize
+            enableReinitialize={true}
             initialValues={questionData}
             validationSchema={validationSchema}
             validateOnBlur={false}
